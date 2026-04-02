@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GamePicker — Подбор игр</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- ===== НАВИГАЦИЯ ===== -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">🎮 GamePicker</div>
+            <div class="nav-links">
+                <a href="#catalog" class="nav-link active" data-page="catalog">Каталог</a>
+                <a href="#picker" class="nav-link" data-page="picker">Подборщик</a>
+                <a href="#favorites" class="nav-link" data-page="favorites">
+                    Избранное <span class="fav-count" id="favCount">0</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== ГЕРОЙ-БАННЕР ===== -->
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Найди свою следующую игру</h1>
+            <p>Агрегатор лучших игр 2025–2026 с умным подбором по твоим предпочтениям</p>
+            <div class="hero-buttons">
+                <a href="#catalog" class="btn btn-primary">🔍 Каталог игр</a>
+                <a href="#picker" class="btn btn-secondary">🎯 Подобрать игру</a>
+            </div>
+        </div>
+        <div class="hero-stats">
+            <div class="stat">
+                <span class="stat-number" id="totalGames">0</span>
+                <span class="stat-label">Игр в базе</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">6</span>
+                <span class="stat-label">Платформ</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">12</span>
+                <span class="stat-label">Жанров</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== КАТАЛОГ ===== -->
+    <main>
+        <section id="catalog" class="page-section active-section">
+            <div class="container">
+                <h2 class="section-title">📚 Каталог игр</h2>
+
+                <!-- Фильтры -->
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>🔍 Поиск</label>
+                        <input type="text" id="searchInput" placeholder="Название игры..." class="filter-input">
+                    </div>
+                    <div class="filter-group">
+                        <label>🎭 Жанр</label>
+                        <select id="genreFilter" class="filter-select">
+                            <option value="all">Все жанры</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>🖥️ Платформа</label>
+                        <select id="platformFilter" class="filter-select">
+                            <option value="all">Все платформы</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>📅 Год</label>
+                        <select id="yearFilter" class="filter-select">
+                            <option value="all">Все годы</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>🔞 Рейтинг</label>
+                        <select id="ageFilter" class="filter-select">
+                            <option value="all">Все рейтинги</option>
+                            <option value="3+">3+</option>
+                            <option value="7+">7+</option>
+                            <option value="12+">12+</option>
+                            <option value="16+">16+</option>
+                            <option value="18+">18+</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>⭐ Оценка</label>
+                        <select id="ratingFilter" class="filter-select">
+                            <option value="all">Любая</option>
+                            <option value="9">9+</option>
+                            <option value="8">8+</option>
+                            <option value="7">7+</option>
+                            <option value="6">6+</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>📊 Сортировка</label>
+                        <select id="sortFilter" class="filter-select">
+                            <option value="rating-desc">По оценке ↓</option>
+                            <option value="rating-asc">По оценке ↑</option>
+                            <option value="year-desc">По году ↓</option>
+                            <option value="year-asc">По году ↑</option>
+                            <option value="name-asc">По имени А-Я</option>
+                        </select>
+                    </div>
+                    <div class="filter-group filter-actions">
+                        <button class="btn btn-small btn-primary" id="applyFilters">Применить</button>
+                        <button class="btn btn-small btn-secondary" id="resetFilters">Сброс</button>
+                    </div>
+                </div>
+
+                <!-- Результаты -->
+                <div class="results-info">
+                    <span id="resultsCount">Найдено: 0 игр</span>
+                </div>
+
+                <!-- Сетка карточек -->
+                <div class="games-grid" id="gamesGrid"></div>
+                <div class="no-results" id="noResults" style="display:none;">
+                    <p>😔 Игры не найдены. Попробуйте изменить фильтры.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== ПОДБОРЩИК ===== -->
+        <section id="picker" class="page-section">
+            <div class="container">
+                <h2 class="section-title">🎯 Умный подборщик игр</h2>
+                <p class="section-subtitle">Ответьте на несколько вопросов, и мы подберём идеальную игру для вас</p>
+
+                <div class="picker-container">
+                    <!-- Шаг 1: Настроение -->
+                    <div class="picker-step active" data-step="1">
+                        <div class="step-header">
+                            <span class="step-number">1/5</span>
+                            <h3>Какое у вас настроение?</h3>
+                        </div>
+                        <div class="picker-options" id="moodOptions">
+                            <button class="picker-option" data-value="action">
+                                <span class="option-icon">⚔️</span>
+                                <span class="option-text">Хочу экшен и адреналин</span>
+                            </button>
+                            <button class="picker-option" data-value="story">
+                                <span class="option-icon">📖</span>
+                                <span class="option-text">Хочу глубокую историю</span>
+                            </button>
+                            <button class="picker-option" data-value="relax">
+                                <span class="option-icon">🌿</span>
+                                <span class="option-text">Хочу расслабиться</span>
+                            </button>
+                            <button class="picker-option" data-value="challenge">
+                                <span class="option-icon">🧩</span>
+                                <span class="option-text">Хочу сложную задачу</span>
+                            </button>
+                            <button class="picker-option" data-value="social">
+                                <span class="option-icon">👥</span>
+                                <span class="option-text">Хочу играть с друзьями</span>
+                            </button>
+                            <button class="picker-option" data-value="explore">
+                                <span class="option-icon">🗺️</span>
+                                <span class="option-text">Хочу исследовать мир</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Шаг 2: Платформа -->
+                    <div class="picker-step" data-step="2">
+                        <div class="step-header">
+                            <span class="step-number">2/5</span>
+                            <h3>На чём будете играть?</h3>
+                        </div>
+                        <div class="picker-options" id="platformOptions">
+                            <button class="picker-option" data-value="PC">
+                                <span class="option-icon">🖥️</span>
+                                <span class="option-text">PC</span>
+                            </button>
+                            <button class="picker-option" data-value="PlayStation 5">
+                                <span class="option-icon">🎮</span>
+                                <span class="option-text">PlayStation 5</span>
+                            </button>
+                            <button class="picker-option" data-value="Xbox Series X/S">
+                                <span class="option-icon">💚</span>
+                                <span class="option-text">Xbox Series X/S</span>
+                            </button>
+                            <button class="picker-option" data-value="Nintendo Switch">
+                                <span class="option-icon">🔴</span>
+                                <span class="option-text">Nintendo Switch</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Шаг 3: Возраст -->
+                    <div class="picker-step" data-step="3">
+                        <div class="step-header">
+                            <span class="step-number">3/5</span>
+                            <h3>Ваш возраст?</h3>
+                        </div>
+                        <div class="picker-options" id="ageOptions">
+                            <button class="picker-option" data-value="3+">
+                                <span class="option-icon">👶</span>
+                                <span class="option-text">До 7 лет</span>
+                            </button>
+                            <button class="picker-option" data-value="7+">
+                                <span class="option-icon">🧒</span>
+                                <span class="option-text">7–11 лет</span>
+                            </button>
+                            <button class="picker-option" data-value="12+">
+                                <span class="option-icon">👦</span>
+                                <span class="option-text">12–15 лет</span>
+                            </button>
+                            <button class="picker-option" data-value="16+">
+                                <span class="option-icon">🧑</span>
+                                <span class="option-text">16–17 лет</span>
+                            </button>
+                            <button class="picker-option" data-value="18+">
+                                <span class="option-icon">🧔</span>
+                                <span class="option-text">18+ лет</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Шаг 4: Длительность -->
+                    <div class="picker-step" data-step="4">
+                        <div class="step-header">
+                            <span class="step-number">4/5</span>
+                            <h3>Сколько времени готовы уделить?</h3>
+                        </div>
+                        <div class="picker-options" id="timeOptions">
+                            <button class="picker-option" data-value="short">
+                                <span class="option-icon">⏱️</span>
+                                <span class="option-text">До 10 часов</span>
+                            </button>
+                            <button class="picker-option" data-value="medium">
+                                <span class="option-icon">⏰</span>
+                                <span class="option-text">10–30 часов</span>
+                            </button>
+                            <button class="picker-option" data-value="long">
+                                <span class="option-icon">🕐</span>
+                                <span class="option-text">30–60 часов</span>
+                            </button>
+                            <button class="picker-option" data-value="very-long">
+                                <span class="option-icon">🌍</span>
+                                <span class="option-text">60+ часов</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Шаг 5: Цена -->
+                    <div class="picker-step" data-step="5">
+                        <div class="step-header">
+                            <span class="step-number">5/5</span>
+                            <h3>Ваш бюджет?</h3>
+                        </div>
+                        <div class="picker-options" id="priceOptions">
+                            <button class="picker-option" data-value="free">
+                                <span class="option-icon">🆓</span>
+                                <span class="option-text">Бесплатно</span>
+                            </button>
+                            <button class="picker-option" data-value="budget">
+                                <span class="option-icon">💰</span>
+                                <span class="option-text">До 1500 ₽</span>
+                            </button>
+                            <button class="picker-option" data-value="mid">
+                                <span class="option-icon">💎</span>
+                                <span class="option-text">1500–3500 ₽</span>
+                            </button>
+                            <button class="picker-option" data-value="premium">
+                                <span class="option-icon">👑</span>
+                                <span class="option-text">Не важно</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Навигация -->
+                    <div class="picker-nav">
+                        <button class="btn btn-secondary" id="prevStep" style="display:none;">← Назад</button>
+                        <div class="step-indicators" id="stepIndicators">
+                            <span class="indicator active"></span>
+                            <span class="indicator"></span>
+                            <span class="indicator"></span>
+                            <span class="indicator"></span>
+                            <span class="indicator"></span>
+                        </div>
+                        <button class="btn btn-primary" id="nextStep" disabled>Далее →</button>
+                    </div>
+                </div>
+
+                <!-- Результаты подбора -->
+                <div class="picker-results" id="pickerResults" style="display:none;">
+                    <h3 class="results-title">🎉 Мы подобрали для вас игры!</h3>
+                    <p class="results-subtitle">На основе ваших предпочтений</p>
+                    <div class="games-grid" id="pickerGamesGrid"></div>
+                    <div class="picker-actions">
+                        <button class="btn btn-primary" id="restartPicker">🔄 Пройти заново</button>
+                        <button class="btn btn-secondary" id="goToCatalog">📚 В каталог</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== ИЗБРАННОЕ ===== -->
+        <section id="favorites" class="page-section">
+            <div class="container">
+                <h2 class="section-title">❤️ Избранное</h2>
+                <p class="section-subtitle">Игры, которые вы добавили в избранное</p>
+                <div class="games-grid" id="favoritesGrid"></div>
+                <div class="no-results" id="noFavorites" style="display:none;">
+                    <p>💔 Пока пусто. Добавьте игры из каталога!</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===== МОДАЛЬНОЕ ОКНО ===== -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <button class="modal-close" id="modalClose">✕</button>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- ===== ФУТЕР ===== -->
+    <footer>
+        <div class="container">
+            <p>🎮 GamePicker © 2026 — Агрегатор игр</p>
+            <p>Все данные представлены в демонстрационных целях</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
